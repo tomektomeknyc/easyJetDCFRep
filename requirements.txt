@@ -2,6 +2,7 @@ streamlit
 pandas
 numpy
 plotly
-refinitiv-data
+refinitiv-dataplatform==1.0.0a21
 streamlit-extras
+
 
