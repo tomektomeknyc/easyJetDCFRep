@@ -1,12 +1,12 @@
 import streamlit as st
-
+import refinitiv.dataplatform.eikon as ek
 # read your Refinitiv App Key from Streamlit Secrets
 app_key = st.secrets["refinitiv"]["app_key"]
 
 # tell the Eikon client to use it
 ek.set_app_key(app_key)
 
-import refinitiv.dataplatform.eikon as ek
+
 import pandas as pd
 import os
 import json
