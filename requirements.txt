@@ -4,5 +4,7 @@ numpy
 plotly
 refinitiv-dataplatform==1.0.0a21
 streamlit-extras
-openpyxl   
+openpyxl 
+feedparser>=6.0.0
+
 
