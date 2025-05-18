@@ -10,7 +10,7 @@ class EasyJetNewsScraper:
         # pure RSS‐feed URLs
         self.urls = {
             "Yahoo Finance": "https://feeds.finance.yahoo.com/rss/2.0/headline?s=EZJ.L&region=GB&lang=en-GB",
-            "Google News":   "https://news.google.com/rss/search?q=easyJet+site:news.google.com&hl=en-GB&gl=GB&ceid=GB:en",
+            "Google News":   "https://news.google.com/rss/search?q=EZJ.L",
             "Finviz":        "https://finviz.com/rss.ashx?t=EZJ",
         }
         self.fetch_methods = {
