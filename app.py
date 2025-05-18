@@ -722,7 +722,7 @@ EasyJet is traded on the London Stock Exchange under the ticker **EZJ.L**.
             s = d.replace(" +0000","").replace(" GMT","")
             try:
                 return datetime.fromisoformat(s)
-        except ValueError:
+            except ValueError:
                 return datetime.strptime(s, "%a, %d %b %Y %H:%M:%S")
 
         all_news["_dt"] = all_news["Date"].apply(parse_date)
