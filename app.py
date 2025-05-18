@@ -727,6 +727,7 @@ EasyJet is traded on the London Stock Exchange under the ticker **EZJ.L**.
 
         all_news["_dt"] = all_news["Date"].apply(parse_date)
         all_news = all_news.sort_values("_dt", ascending=False).reset_index(drop=True)
+        all_news["Date"] = all_news["Date"].str.replace(r" \+0000$", "", regex=True)
         all_news.drop(columns=["_dt"], inplace=True)
 
         # 3) merge headline+link into a single "News" column
