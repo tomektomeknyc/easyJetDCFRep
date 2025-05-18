@@ -699,7 +699,7 @@ EasyJet is traded on the London Stock Exchange under the ticker **EZJ.L**.
 
         @st.cache_data(ttl=24*60*60)
         def get_all_news() -> pd.DataFrame:
-        rows = []
+        rows: list[pd.DataFrame] = []
         # call each fetch_* method
         for source, fn in scraper.fetch_methods.items():
             try:
