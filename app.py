@@ -695,7 +695,7 @@ EasyJet is traded on the London Stock Exchange under the ticker **EZJ.L**.
 
         # Tab 6: News (updates once every 24 hours)
     with main_tab6:
-        st.header("📰 Latest easyJet News (Yahoo, Google, Finviz, Refinitiv)")
+        st.header("📰 Latest easyJet News (Yahoo, Google, Finviz)")
 
         @st.cache_data(ttl=24*60*60)
         def get_all_news() -> pd.DataFrame:
