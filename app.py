@@ -699,31 +699,31 @@ EasyJet is traded on the London Stock Exchange under the ticker **EZJ.L**.
 
         @st.cache_data(ttl=24*60*60)
         def get_all_news() -> pd.DataFrame:
-        rows: list[pd.DataFrame] = []
+            rows: list[pd.DataFrame] = []
         # call each fetch_* method
-        for source, fn in scraper.fetch_methods.items():
-            try:
-                df = fn(count=10) if source == "Refinitiv" else fn()
-                df["Source"] = source
-                rows.append(df)
-            except Exception:
+            for source, fn in scraper.fetch_methods.items():
+                try:
+                    df = fn(count=10) if source == "Refinitiv" else fn()
+                    df["Source"] = source
+                    rows.append(df)
+                except Exception:
                 # silently skip on any error
-                continue
+                    continue
 
-        if not rows:
-            return pd.DataFrame(columns=["Date","Headline","Link","Source"])
-        return pd.concat(rows, ignore_index=True)
+            if not rows:
+                return pd.DataFrame(columns=["Date","Headline","Link","Source"])
+            return pd.concat(rows, ignore_index=True)
 
         # 1) load & cache
         all_news = get_all_news()
 
         # 2) parse, sort by date
         def parse_date(d: str):
-        s = d.replace(" +0000","").replace(" GMT","")
-        try:
-            return datetime.fromisoformat(s)
+            s = d.replace(" +0000","").replace(" GMT","")
+            try:
+                return datetime.fromisoformat(s)
         except ValueError:
-            return datetime.strptime(s, "%a, %d %b %Y %H:%M:%S")
+                return datetime.strptime(s, "%a, %d %b %Y %H:%M:%S")
 
         all_news["_dt"] = all_news["Date"].apply(parse_date)
         all_news = all_news.sort_values("_dt", ascending=False).reset_index(drop=True)
@@ -757,10 +757,10 @@ EasyJet is traded on the London Stock Exchange under the ticker **EZJ.L**.
         if all_news.empty:
             st.warning("⚠️ No news items found.")
         else:
-            st.markdown("### Headlines")
-        for _, row in all_news.iterrows():
-            title = row["News"].split("<br>")[0]
-            st.markdown(f"- **{row['Date']}**: [{title}]({row['Link']})")
+             st.markdown("### Headlines")
+             for _, row in all_news.iterrows():
+                 title = row["News"].split("<br>")[0]
+                 st.markdown(f"- **{row['Date']}**: [{title}]({row['Link']})")
 
 
 
