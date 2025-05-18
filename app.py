@@ -648,19 +648,44 @@ EasyJet is traded on the London Stock Exchange under the ticker **EZJ.L**.
     with main_tab4:
         st.header("NPV Sensitivity Simulation (5 years)")
 
-        # place your sliders
+    # --- inputs ---
         col1, col2 = st.columns(2)
         with col1:
             g = st.slider("Growth rate (g)", 0.0, 0.10, 0.02, step=0.002)
         with col2:
             r = st.slider("Discount rate (r)", 0.04, 0.15, 0.08, step=0.002)
 
-        # now render a button at the tab level (two spaces in from `with main_tab4`)
+    # --- epsilon + single placeholder ---
+            eps = 1e-6
+            placeholder = st.empty()
+
         if st.button("Run NPV Simulation", key="npv_sim"):
-            # this is indented four spaces from `with main_tab4`
-            st.write("→ Trying to open:", EXCEL_PATH)
-            fig = run_dcf_sensitivity(str(EXCEL_PATH))
-            st.plotly_chart(fig, use_container_width=True)
+        # 1) show info while we hit the file
+            placeholder.info(f"→ Scanning Excel: {EXCEL_PATH}")
+
+        # 2) guarantee r - g > 0
+            g_adj = min(g, r - eps)
+
+            try:
+            # 3) run your DCF routine
+                fig = run_dcf_sensitivity(
+                    path=str(EXCEL_PATH),
+                    growth_rate=g_adj,
+                    discount_rate=r,
+                    epsilon=eps
+            )
+
+            # 4) on success: swap to a green checkmark + render the chart
+                placeholder.success(f"✅ Opened {EXCEL_PATH} successfully!")
+                st.plotly_chart(fig, use_container_width=True)
+
+            # 5) then clear the message after a moment
+                time.sleep(10)  
+                placeholder.empty()
+
+            except Exception as e:
+            # on failure: show the error in red
+                placeholder.error(f"❌ Failed to load or simulate: {e}")
 
 
     # Tab 5: Report
