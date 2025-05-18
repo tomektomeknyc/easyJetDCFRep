@@ -49,7 +49,6 @@ from dcf_sensitivity import run_dcf_sensitivity
 from easy_jet_news_scraper import EasyJetNewsScraper
 
 
-from fetch_peer_returns import fetch_analyst_target_refinitiv, fetch_easyjet_news
 
 
 
