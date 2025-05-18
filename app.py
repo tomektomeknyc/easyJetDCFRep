@@ -700,67 +700,7 @@ EasyJet is traded on the London Stock Exchange under the ticker **EZJ.L**.
         """, unsafe_allow_html=True)
     
 
-        # Tab 6: News (updates once every 24 hours)
-       
-        # Tab 6: News (updates once every 24 hours)
-    # with main_tab6:
-    #     st.header("📰 Latest easyJet News (Yahoo + Google+ FinViz)")
-
-    #     # 1) Load & cache
-    #     all_news = get_all_news()
-
-    #     # 2) Tidy up dates & sort newest first
-    #     def parse_date(d: str) -> datetime:
-    #         s = d.replace(" +0000", "").replace(" GMT", "")
-    #         try:
-    #             return datetime.fromisoformat(s)
-    #         except ValueError:
-    #             return datetime.strptime(s, "%a, %d %b %Y %H:%M:%S")
-
-    #     all_news["_dt"] = all_news["Date"].apply(parse_date)
-    #     all_news = all_news.sort_values("_dt", ascending=False).reset_index(drop=True)
-    #     all_news["Date"] = all_news["_dt"].dt.strftime("%Y-%m-%d %H:%M")
-    #     all_news = all_news.drop(columns=["_dt"])
-
-    #     # 3) Combine headline + link into one “News” cell
-    #     all_news["News"] = (
-    #         all_news["Headline"]
-    #         + "<br>"
-    #         + all_news["Link"].apply(lambda u: f'<a href="{u}" target="_blank">{u}</a>')
-    #     )
-
-    #     # 4) Build display DF with exactly three columns
-    #     df_display = all_news[["Date", "News", "Source"]]
-
-    #     # 5) Render scrollable HTML table with CSS tweaks
-    #     st.markdown(
-    #         """
-    #         <style>
-    #           .news-table { width:100%; border-collapse: collapse; }
-    #           .news-table th, .news-table td { padding: 8px; vertical-align: top; }
-    #           .news-table th:nth-child(1), .news-table td:nth-child(1) { width: 20%; }
-    #           .news-table th:nth-child(2), .news-table td:nth-child(2) { width: 60%; }
-    #           .news-table th:nth-child(3), .news-table td:nth-child(3) { width: 20%; text-align:center; }
-    #           .news-table th { background-color: #FFA500; color: #000; }
-    #           .scrollable-news { height: 400px; overflow-y: auto; border: 1px solid #444; border-radius: 4px; }
-    #         </style>
-    #         """,
-    #         unsafe_allow_html=True,
-    #     )
-    #     html = df_display.to_html(escape=False, index=False, classes="news-table")
-    #     st.markdown(f'<div class="scrollable-news">{html}</div>', unsafe_allow_html=True)
-
-    #     # 6) If empty, warn; otherwise show bullet-list of just the headlines
-    #     if all_news.empty:
-    #         st.warning("⚠️ No news items found.")
-    #     else:
-    #         st.markdown("### Headlines")
-    #         for _, row in all_news.iterrows():
-    #             # extract pure headline text (before the <br>)
-    #             headline_text = row["Headline"]
-    #             if "<br>" in headline_text:
-    #                 headline_text = headline_text.split("<br>")[0]
-    #             st.markdown(f"- **{row['Date']}**: [{headline_text}]({row['Link']})")
+      
 
         # Tab 6: News (updates once every 24 hours)
     with main_tab6:
