@@ -44,7 +44,8 @@ from dcf_analyzer import DCFAnalyzer
 from advanced_visualizations import AdvancedVisualizations
 from monte_carlo import run_monte_carlo
 from generate_report import generate_html_report
-from fetch_peer_returns import fetch_analyst_target_refinitiv
+from fetch_peer_returns import fetch_analyst_target_refinitiv, fetch_easyjet_news
+
 from dcf_sensitivity import run_dcf_sensitivity
 from easy_jet_news_scraper import EasyJetNewsScraper
 
