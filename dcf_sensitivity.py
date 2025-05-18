@@ -3,7 +3,13 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 
-def run_dcf_sensitivity(excel_path: str):
+def run_dcf_sensitivity(
+    path: str,
+    growth_rate: float,
+    discount_rate: float,
+    epsilon: float = 1e-6
+):
+
     """
     Reads free cash flow data from an Excel file, computes a DCF sensitivity surface,
     and returns an interactive Plotly Figure.
@@ -16,7 +22,7 @@ def run_dcf_sensitivity(excel_path: str):
     """
     # 1) Read the “DCF” sheet, cells E122:Q122
     df = pd.read_excel(
-        excel_path,
+        path,
         sheet_name="DCF",
         header=None,
         usecols="E:Q",
@@ -74,4 +80,3 @@ def run_dcf_sensitivity(excel_path: str):
     )
 
     return fig
-
