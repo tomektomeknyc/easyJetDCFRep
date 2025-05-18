@@ -765,7 +765,7 @@ EasyJet is traded on the London Stock Exchange under the ticker **EZJ.L**.
 
 
 # Final CSS override for certain containers
-            st.markdown("""
+        st.markdown("""
 <style>
 [data-testid="stylable_container"]#current_price_container,
 [data-testid="stylable_container"]#multiples_price_container,
