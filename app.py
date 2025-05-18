@@ -29,9 +29,6 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 import refinitiv.dataplatform.eikon as ek
 ek.set_app_key(st.secrets["refinitiv"]["app_key"])
-
-
-
 import os
 import pandas as pd
 import numpy as np
@@ -44,16 +41,9 @@ from dcf_analyzer import DCFAnalyzer
 from advanced_visualizations import AdvancedVisualizations
 from monte_carlo import run_monte_carlo
 from generate_report import generate_html_report
-from fetch_peer_returns import fetch_easyjet_news
-
+from fetch_peer_returns import fetch_easyjet_news, fetch_analyst_target_refinitiv
 from dcf_sensitivity import run_dcf_sensitivity
 from easy_jet_news_scraper import EasyJetNewsScraper
-
-
-
-
-
-
 import requests
 from datetime import datetime
 
@@ -705,91 +695,73 @@ EasyJet is traded on the London Stock Exchange under the ticker **EZJ.L**.
 
         # Tab 6: News (updates once every 24 hours)
     with main_tab6:
-        st.header("📰 Latest easyJet News (Yahoo + Google + Finviz)")
+    st.header("📰 Latest easyJet News (Yahoo, Google, Finviz, Refinitiv)")
 
-        # 1) Load & cache
-        all_news = get_all_news()
-
-        # 2) Tidy up dates, sort most recent first
-        def parse_date(d: str) -> datetime:
-            s = d.replace(" +0000", "").replace(" GMT", "")
+    @st.cache_data(ttl=24*60*60)
+    def get_all_news() -> pd.DataFrame:
+        rows = []
+        # call each fetch_* method
+        for source, fn in scraper.fetch_methods.items():
             try:
-                return datetime.fromisoformat(s)
-            except ValueError:
-                return datetime.strptime(s, "%a, %d %b %Y %H:%M:%S")
+                df = fn(count=10) if source == "Refinitiv" else fn()
+                df["Source"] = source
+                rows.append(df)
+            except Exception:
+                # silently skip on any error
+                continue
 
-        all_news["_dt"] = all_news["Date"].apply(parse_date)
-        all_news = all_news.sort_values("_dt", ascending=False).reset_index(drop=True)
-        all_news["Date"] = all_news["_dt"].dt.strftime("%Y-%m-%d %H:%M")
-        all_news = all_news.drop(columns=["_dt"])
+        if not rows:
+            return pd.DataFrame(columns=["Date","Headline","Link","Source"])
+        return pd.concat(rows, ignore_index=True)
 
-        # 3) Merge headline + link into one “News” cell
-        all_news["News"] = (
-            all_news["Headline"]
-            + "<br>"
-            + all_news["Link"].apply(
-                lambda u: f'<a href="{u}" target="_blank">{u}</a>'
-            )
-        )
+    # 1) load & cache
+    all_news = get_all_news()
 
-        # 4) Build display DF with exactly three columns
-        df_display = all_news[["Date", "News", "Source"]]
+    # 2) parse, sort by date
+    def parse_date(d: str):
+        s = d.replace(" +0000","").replace(" GMT","")
+        try:
+            return datetime.fromisoformat(s)
+        except ValueError:
+            return datetime.strptime(s, "%a, %d %b %Y %H:%M:%S")
 
-        # 5) Render scrollable HTML table with CSS tweaks
-        st.markdown(
-            """
-            <style>
-  .news-table { width:100%; border-collapse: collapse; }
-  .news-table th, .news-table td { padding:8px; vertical-align: top; border-bottom:1px solid #444; }
-  .news-table td { white-space: normal; word-break: break-word; }
+    all_news["_dt"] = all_news["Date"].apply(parse_date)
+    all_news = all_news.sort_values("_dt", ascending=False).reset_index(drop=True)
+    all_news.drop(columns=["_dt"], inplace=True)
 
-  /* center-align columns */
-  .news-table th:nth-child(1), .news-table td:nth-child(1) {
-    width:20%;
-    text-align: center;
-  }
-  .news-table th:nth-child(2), .news-table td:nth-child(2) {
-    width:60%;
-    text-align: center;
-  }
-  .news-table th:nth-child(3), .news-table td:nth-child(3) {
-    width:20%;
-    text-align: center;
-  }
+    # 3) merge headline+link into a single "News" column
+    all_news["News"] = all_news["Headline"] + "<br>" + \
+        all_news["Link"].apply(lambda u: f'<a href="{u}" target="_blank">{u}</a>')
 
-  /* scroll container */
-  .scrollable-news {
-    max-height: 400px;
-    overflow-y: auto;
-    overflow-x: auto;
-    border:1px solid #444;
-    border-radius:4px;
-    padding:8px;
-  }
+    # 4) build display DF
+    df_display = all_news[["Date","News","Source"]]
 
-  /* header style */
-  .news-table th { background-color: #FFA500; color: #000; }
-</style>
+    # 5) render scrollable HTML table
+    st.markdown("""
+    <style>
+      .news-table { width:100%; border-collapse: collapse; }
+      .news-table th, .news-table td { padding:8px; vertical-align: top; border-bottom:1px solid #444; }
+      .news-table td { white-space: normal; word-break: break-word; }
+      .news-table th:nth-child(1), .news-table td:nth-child(1) { width:20%; text-align:center; }
+      .news-table th:nth-child(2), .news-table td:nth-child(2) { width:60%; text-align:center; }
+      .news-table th:nth-child(3), .news-table td:nth-child(3) { width:20%; text-align:center; }
+      .scrollable-news { max-height:400px; overflow:auto; border:1px solid #444; border-radius:4px; padding:8px; }
+      .news-table th { background-color:#FFA500; color:#000; }
+    </style>
+    """, unsafe_allow_html=True)
 
-            """,
-            unsafe_allow_html=True,
-        )
-        html_table = df_display.to_html(
-            escape=False,
-            index=False,
-            classes="news-table"
-        )
-        st.markdown(f'<div class="scrollable-news">{html_table}</div>', unsafe_allow_html=True)
+    html_table = df_display.to_html(escape=False, index=False, classes="news-table")
+    st.markdown(f'<div class="scrollable-news">{html_table}</div>', unsafe_allow_html=True)
 
-        # 6) Headlines list (optional)
-        if all_news.empty:
-            st.warning("⚠️ No news items found.")
-        else:
-            st.markdown("### Headlines")
-            for _, row in all_news.iterrows():
-                # split out the text part before the <br>
-                title = row["News"].split("<br>")[0]
-                st.markdown(f"- **{row['Date']}**: [{title}]({row['Link']})")
+    # 6) optional bullet list
+    if all_news.empty:
+        st.warning("⚠️ No news items found.")
+    else:
+        st.markdown("### Headlines")
+        for _, row in all_news.iterrows():
+            title = row["News"].split("<br>")[0]
+            st.markdown(f"- **{row['Date']}**: [{title}]({row['Link']})")
+
 
 
 # Final CSS override for certain containers
