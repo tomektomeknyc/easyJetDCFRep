@@ -695,10 +695,10 @@ EasyJet is traded on the London Stock Exchange under the ticker **EZJ.L**.
 
         # Tab 6: News (updates once every 24 hours)
     with main_tab6:
-    st.header("📰 Latest easyJet News (Yahoo, Google, Finviz, Refinitiv)")
+        st.header("📰 Latest easyJet News (Yahoo, Google, Finviz, Refinitiv)")
 
-    @st.cache_data(ttl=24*60*60)
-    def get_all_news() -> pd.DataFrame:
+        @st.cache_data(ttl=24*60*60)
+        def get_all_news() -> pd.DataFrame:
         rows = []
         # call each fetch_* method
         for source, fn in scraper.fetch_methods.items():
@@ -714,30 +714,30 @@ EasyJet is traded on the London Stock Exchange under the ticker **EZJ.L**.
             return pd.DataFrame(columns=["Date","Headline","Link","Source"])
         return pd.concat(rows, ignore_index=True)
 
-    # 1) load & cache
-    all_news = get_all_news()
+        # 1) load & cache
+        all_news = get_all_news()
 
-    # 2) parse, sort by date
-    def parse_date(d: str):
+        # 2) parse, sort by date
+        def parse_date(d: str):
         s = d.replace(" +0000","").replace(" GMT","")
         try:
             return datetime.fromisoformat(s)
         except ValueError:
             return datetime.strptime(s, "%a, %d %b %Y %H:%M:%S")
 
-    all_news["_dt"] = all_news["Date"].apply(parse_date)
-    all_news = all_news.sort_values("_dt", ascending=False).reset_index(drop=True)
-    all_news.drop(columns=["_dt"], inplace=True)
+        all_news["_dt"] = all_news["Date"].apply(parse_date)
+        all_news = all_news.sort_values("_dt", ascending=False).reset_index(drop=True)
+        all_news.drop(columns=["_dt"], inplace=True)
 
-    # 3) merge headline+link into a single "News" column
-    all_news["News"] = all_news["Headline"] + "<br>" + \
+        # 3) merge headline+link into a single "News" column
+        all_news["News"] = all_news["Headline"] + "<br>" + \
         all_news["Link"].apply(lambda u: f'<a href="{u}" target="_blank">{u}</a>')
 
-    # 4) build display DF
-    df_display = all_news[["Date","News","Source"]]
+        # 4) build display DF
+        df_display = all_news[["Date","News","Source"]]
 
-    # 5) render scrollable HTML table
-    st.markdown("""
+        # 5) render scrollable HTML table
+        st.markdown("""
     <style>
       .news-table { width:100%; border-collapse: collapse; }
       .news-table th, .news-table td { padding:8px; vertical-align: top; border-bottom:1px solid #444; }
@@ -750,14 +750,14 @@ EasyJet is traded on the London Stock Exchange under the ticker **EZJ.L**.
     </style>
     """, unsafe_allow_html=True)
 
-    html_table = df_display.to_html(escape=False, index=False, classes="news-table")
-    st.markdown(f'<div class="scrollable-news">{html_table}</div>', unsafe_allow_html=True)
+        html_table = df_display.to_html(escape=False, index=False, classes="news-table")
+        st.markdown(f'<div class="scrollable-news">{html_table}</div>', unsafe_allow_html=True)
 
     # 6) optional bullet list
-    if all_news.empty:
-        st.warning("⚠️ No news items found.")
-    else:
-        st.markdown("### Headlines")
+        if all_news.empty:
+            st.warning("⚠️ No news items found.")
+        else:
+            st.markdown("### Headlines")
         for _, row in all_news.iterrows():
             title = row["News"].split("<br>")[0]
             st.markdown(f"- **{row['Date']}**: [{title}]({row['Link']})")
@@ -765,7 +765,7 @@ EasyJet is traded on the London Stock Exchange under the ticker **EZJ.L**.
 
 
 # Final CSS override for certain containers
-        st.markdown("""
+            st.markdown("""
 <style>
 [data-testid="stylable_container"]#current_price_container,
 [data-testid="stylable_container"]#multiples_price_container,
