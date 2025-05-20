@@ -703,23 +703,23 @@ EasyJet is traded on the London Stock Exchange under the ticker **EZJ.L**.
 
     # Session state setup
         if "report_generated" not in st.session_state:
-           st.session_state.report_generated = False
+            st.session_state.report_generated = False
         if "show_disclaimer_until" not in st.session_state:
-           st.session_state.show_disclaimer_until = 0
+            st.session_state.show_disclaimer_until = 0
         if "report_file_path" not in st.session_state:
-           st.session_state.report_file_path = "attached_assets/EasyJet_DCF_Report.html"
+            st.session_state.report_file_path = "attached_assets/EasyJet_DCF_Report.html"
 
     # Create Report
         if st.button("Create Report"):
             try:
-               from generate_report import generate_html_report
-               report_path = generate_html_report(dcf_analyzer, returns_array)
-               st.session_state.report_generated = True
-               st.session_state.report_file_path = report_path
-               st.success(f"✅ Report generated: {os.path.basename(report_path)}")
+                from generate_report import generate_html_report
+                report_path = generate_html_report(dcf_analyzer, returns_array)
+                st.session_state.report_generated = True
+                st.session_state.report_file_path = report_path
+                st.success(f"✅ Report generated: {os.path.basename(report_path)}")
             except Exception as e:
-               st.session_state.report_generated = False
-               st.error(f"❌ Report generation failed: {e}")
+                st.session_state.report_generated = False
+                st.error(f"❌ Report generation failed: {e}")
 
     # Show Download Button
         if st.session_state.report_generated:
