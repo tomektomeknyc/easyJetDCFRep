@@ -701,47 +701,53 @@ EasyJet is traded on the London Stock Exchange under the ticker **EZJ.L**.
     with main_tab5:
         st.header("📄 Generate HTML Report")
 
-    # Track report generation + disclaimer render
+    # Session state setup
         if "report_generated" not in st.session_state:
-            st.session_state.report_generated = False
-        if "disclaimer_shown" not in st.session_state:
-            st.session_state.disclaimer_shown = False
+           st.session_state.report_generated = False
+        if "show_disclaimer_until" not in st.session_state:
+           st.session_state.show_disclaimer_until = 0
+        if "report_file_path" not in st.session_state:
+           st.session_state.report_file_path = "attached_assets/EasyJet_DCF_Report.html"
 
-    # Button to create the report
+    # Create Report
         if st.button("Create Report"):
-           try:
+            try:
                from generate_report import generate_html_report
                report_path = generate_html_report(dcf_analyzer, returns_array)
                st.session_state.report_generated = True
+               st.session_state.report_file_path = report_path
                st.success(f"✅ Report generated: {os.path.basename(report_path)}")
-           except Exception as e:
+            except Exception as e:
                st.session_state.report_generated = False
                st.error(f"❌ Report generation failed: {e}")
 
-    # Show download + disclaimer only once
+    # Show Download Button
         if st.session_state.report_generated:
-            report_file_path = "attached_assets/EasyJet_DCF_Report.html"
+            report_file_path = st.session_state.report_file_path
             if os.path.exists(report_file_path):
                 with open(report_file_path, "rb") as f:
                     report_bytes = f.read()
-                st.download_button(
+ 
+            # Download button click triggers disclaimer visibility for 15 seconds
+                if st.download_button(
                     label="⬇️ Download HTML Report",
                     data=report_bytes,
                     file_name="EasyJet_DCF_Report.html",
                     mime="text/html"
-            )
+            ):
+                    st.session_state.show_disclaimer_until = time.time() + 1
 
-        # ✅ Show disclaimer once and only once
-            if not st.session_state.disclaimer_shown:
-                st.markdown("""
+    # Show disclaimer only if inside the 15s window
+        if time.time() < st.session_state.show_disclaimer_until:
+            st.markdown("""
             <div style="background-color:#FFA500; padding:10px; border-radius:5px; margin-top:20px; text-align:center;">
                 <p style="margin:0; font-size:14px; color:#000;">
-                    This interactive DCF analysis dashboard is for educational and analytical purposes only.<br>
-                    It is not financial advice. Data is based on historical information and financial projections.
+                This interactive DCF analysis dashboard is for educational and analytical purposes only.<br>
+                It is not financial advice. Data is based on historical information and financial projections.
                 </p>
             </div>
-                """, unsafe_allow_html=True)
-                st.session_state.disclaimer_shown = True
+            """, unsafe_allow_html=True)
+
 
     
 
