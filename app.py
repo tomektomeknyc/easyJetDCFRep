@@ -860,7 +860,7 @@ EasyJet is traded on the London Stock Exchange under the ticker **EZJ.L**.
     
     with main_tab7:
         with st.container():
-            st.header("📉 EZJ Regression Surface (3D)")
+            
 
         try:
             df_regression = pd.read_excel("attached_assets/EZJFuelIndexReg.xlsx", sheet_name=0, header=21)
