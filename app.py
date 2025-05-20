@@ -860,33 +860,31 @@ EasyJet is traded on the London Stock Exchange under the ticker **EZJ.L**.
     
     with main_tab7:
         with st.container():
-            
+            try:
+                df_regression = pd.read_excel("attached_assets/EZJFuelIndexReg.xlsx", sheet_name=0, header=21)
+                msg = st.empty()
+                msg.success("✅ Loaded EZJFuelIndexReg.xlsx successfully!")
+                time.sleep(10)
+                msg.empty()  # clears the message after 10 seconds
+            except Exception as e:
+                st.error(f"❌ Failed to load regression Excel file: {e}")
+                st.stop()
 
-        try:
-            df_regression = pd.read_excel("attached_assets/EZJFuelIndexReg.xlsx", sheet_name=0, header=21)
-            msg = st.empty()
-            msg.success("✅ Loaded EZJFuelIndexReg.xlsx successfully!")
-            time.sleep(10)
-            msg.empty()  # clears the message after 10 seconds
-        except Exception as e:
-            st.error(f"❌ Failed to load regression Excel file: {e}")
-            st.stop()
-
-        show_regression_surface()
+            show_regression_surface()
 
 
 
     # Final CSS override for certain containers
         st.markdown("""
-    <style>
-    [data-testid="stylable_container"]#current_price_container,
-    [data-testid="stylable_container"]#multiples_price_container,
-    [data-testid="stylable_container"]#perpetuity_price_container,
-    [data-testid="stylable_container"]#wacc_growth_container {
+        <style>
+        [data-testid="stylable_container"]#current_price_container,
+        [data-testid="stylable_container"]#multiples_price_container,
+        [data-testid="stylable_container"]#perpetuity_price_container,
+        [data-testid="stylable_container"]#wacc_growth_container {
         background-color: #444 !important;
-    }
-    </style>
-    """, unsafe_allow_html=True)
+        }
+        </style>
+        """, unsafe_allow_html=True)
 
 
 if __name__ == "__main__":
