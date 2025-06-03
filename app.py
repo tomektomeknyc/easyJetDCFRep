@@ -686,7 +686,7 @@ EasyJet is traded on the London Stock Exchange under the ticker **EZJ.L**.
 
             # 4) on success: swap to a green checkmark + render the chart
                 placeholder.success(f"✅ Opened {EXCEL_PATH} successfully!")
-                 fig.update_layout(
+                fig.update_layout(
                 width=1500,    # set desired width in pixels
                 height=700,    # set desired height in pixels
                 margin=dict(l=40, r=40, t=40, b=40)
