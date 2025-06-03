@@ -815,7 +815,7 @@ EasyJet is traded on the London Stock Exchange under the ticker **EZJ.L**.
   }
   .news-table th:nth-child(2), .news-table td:nth-child(2) {
     width:60%;
-    text-align: center;
+    text-align: left;
   }
   .news-table th:nth-child(3), .news-table td:nth-child(3) {
     width:20%;
